@@ -13,6 +13,20 @@ class TestMatematik(unittest.TestCase):
         self.assertEqual(FirstTest.subtraktion(5,3),2)
         self.assertEqual(FirstTest.subtraktion(0,0),0)
 
+    def test_addition_random(self):
+        a = random.randint(0,100)
+        b = random.randint(0,100)
+        c = FirstTest.addition(a,b)
+        self.assertGreaterEqual(c,a)
+        self.assertGreaterEqual(c,b)
+
+    def test_subtraktion_random(self):
+        a = random.randint(0,100)
+        b = random.randint(0,100)
+        c = FirstTest.subtraktion(a,b)
+        self.assertLessEqual(c,a)
+        self.assertLessEqual(c,b)
+
 class TestModel(unittest.TestCase):
 
     def test_model_hämta(self):
