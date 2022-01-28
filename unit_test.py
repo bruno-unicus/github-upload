@@ -1,31 +1,66 @@
 # -*- encoding: latin-1 -*-
 from examples_to_be_tested import *
 import unittest
+from unittest.mock import MagicMock
 
-class TestAll(unittest.TestCase):
+class TestMatematik(unittest.TestCase):
 
     def test_addition(self):
-        self.assertEqual(firstTest.addition(2,3),5)
-        self.assertEqual(firstTest.addition(0,0),0)
+        self.assertEqual(FirstTest.addition(2,3),5)
+        self.assertEqual(FirstTest.addition(0,0),0)
 
     def test_subtraktion(self):
-        self.assertEqual(firstTest.subtraktion(5,3),2)
-        self.assertEqual(firstTest.subtraktion(0,0),0)
+        self.assertEqual(FirstTest.subtraktion(5,3),2)
+        self.assertEqual(FirstTest.subtraktion(0,0),0)
 
-    def test_model(self):
+class TestModel(unittest.TestCase):
+
+    def test_model_hämta(self):
         model = Model()
         _id = model.SkapaText("hej")
         self.assertEqual(model.HämtaText(_id),"hej")
-        self.assertEqual(model.ÄndraText(_id,"hejdå"),True)
-        self.assertEqual(model.HämtaText(_id),"hejdå")
-        self.assertEqual(model.TaBortText(_id),None)
 
-    def test_data(self):
+    def test_model_ändra(self):
+        model = Model()
+        _id = model.SkapaText("hej")
+        self.assertEqual(model.HämtaText(_id),"hej")
+        model.ÄndraText(_id,"hejdå")
+        self.assertEqual(model.HämtaText(_id),"hejdå")
+
+    def test_model_ta_bort(self):
+        model = Model()
+        _id = model.SkapaText("hej")
+        model.TaBortText(_id)
+        self.assertRaises(KeyError,model.HämtaText,_id)
+
+class TestData(unittest.TestCase):
+
+    def test_data_skriv(self):
         data = Data()
         self.assertEqual(data.Skriv(0,"hej"),0)
         self.assertEqual(data.Hämta(0),"hej")
-        self.assertEqual(data.TaBort(0),None)
+
+    def test_data_hämta_icke_existerande(self):
+        data = Data()
+        self.assertRaises(KeyError,data.Hämta,0)
+
+    def test_data_hämta_existerande(self):
+        data = Data()
+        self.assertEqual(data.Skriv(0,"hej"),0)
+        self.assertEqual(data.Hämta(0),"hej")
+
+    def test_data_ta_bort(self):
+        data = Data()
+        self.assertEqual(data.Skriv(0,"hej"),0)
+        self.assertEqual(data.TaBort(0),{})
+        self.assertRaises(KeyError,data.Hämta,0)
+
+class TestLoginApi(unittest.TestCase):
+    
+    def test_login(self):
+        requests.post = MagicMock(return_value={ "token": "string", "status_code": 200 })
+        login = LoginApi()
+        self.assertEqual(login.response,{ "token": "string", "status_code": 200 })
 
 if __name__ == '__main__':
     unittest.main()
-

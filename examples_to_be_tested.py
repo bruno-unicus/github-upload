@@ -1,7 +1,8 @@
 # -*- encoding: latin-1 -*-
 import random
+import requests
 
-class firstTest():
+class FirstTest:
 
     def addition(a: int,b: int) -> int:
         return a + b
@@ -21,10 +22,7 @@ class Model:
 
     def ÄndraText(self,_id,text: str) -> bool:
         self.data.Skriv(_id,text)
-        if True:
-            return True
-        else:
-            return False
+        return True
 
     def TaBortText(self,_id: int) -> None:
         return self.data.TaBort(_id)
@@ -41,9 +39,21 @@ class Data:
         self.databas[_id] = text
         return _id
 
-    def TaBort(self,_id: int) -> None:
-        self.databas[_id] = None
-        return None
+    def TaBort(self,_id: int) -> dict:
+        del self.databas[_id]
+        return self.databas
 
     def Hämta(self,_id: int) -> str:
         return self.databas[_id]
+
+class LoginApi:
+    
+    def __init__(self, username = "username", password = "password"):
+        post_data = { "name": username, "password": password }
+        url = "http://www.faketestsiteurl.com/login/start"
+        self.response = requests.post(url, data = post_data)
+
+    def use_api(self, post_data: dict):
+        url = "http://www.faketestsiteurl.com/returns"
+        post_headers = { "auth": self.response.token }
+        self.response = requests.post(url, headers = post_headers, data = post_data)
