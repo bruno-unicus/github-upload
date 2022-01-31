@@ -1,4 +1,5 @@
 # -*- encoding: latin-1 -*-
+import requests
 from examples_to_be_tested import *
 import unittest
 from unittest.mock import MagicMock
@@ -21,11 +22,10 @@ class TestMatematik(unittest.TestCase):
         self.assertGreaterEqual(c,b)
 
     def test_subtraktion_random(self):
-        a = random.randint(0,100)
-        b = random.randint(0,100)
+        a = random.randint(1,100)
+        b = random.randint(1,100)
         c = FirstTest.subtraktion(a,b)
-        self.assertLessEqual(c,a)
-        self.assertLessEqual(c,b)
+        self.assertTrue(c < a or c < b)
 
 class TestModel(unittest.TestCase):
 
@@ -45,7 +45,7 @@ class TestModel(unittest.TestCase):
         model = Model()
         _id = model.SkapaText("hej")
         model.TaBortText(_id)
-        self.assertRaises(KeyError,model.HämtaText,_id)
+        self.assertEqual(model.HämtaText(_id),None)
 
 class TestData(unittest.TestCase):
 
@@ -56,7 +56,7 @@ class TestData(unittest.TestCase):
 
     def test_data_hämta_icke_existerande(self):
         data = Data()
-        self.assertRaises(KeyError,data.Hämta,0)
+        self.assertEqual(data.Hämta(0),None)
 
     def test_data_hämta_existerande(self):
         data = Data()
@@ -67,14 +67,23 @@ class TestData(unittest.TestCase):
         data = Data()
         self.assertEqual(data.Skriv(0,"hej"),0)
         self.assertEqual(data.TaBort(0),{})
-        self.assertRaises(KeyError,data.Hämta,0)
+        self.assertEqual(data.Hämta(0),None)
 
 class TestLoginApi(unittest.TestCase):
     
-    def test_login(self):
-        requests.post = MagicMock(return_value={ "token": "string", "status_code": 200 })
+    def test_valid_login(self):
         login = LoginApi()
-        self.assertEqual(login.response,{ "token": "string", "status_code": 200 })
+
+        requests.post = MagicMock(return_value={ "json": { "token": "string" }, "status_code": 200})
+        response.json = MagicMock(return_value={ "token": "string" })
+        self.assertEqual(login.login(),True)
+
+    def test_invalid_login(self):
+        login = LoginApi(username="test",password="test")
+
+        requests.post = MagicMock(return_value={ "json": { }, "status_code": 403})
+        response.json = MagicMock(return_value={})
+        self.assertEqual(login.login(),False)
 
 if __name__ == '__main__':
     unittest.main()
