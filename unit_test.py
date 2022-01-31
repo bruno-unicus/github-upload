@@ -1,6 +1,7 @@
 # -*- encoding: latin-1 -*-
 import requests
-from examples_to_be_tested import *
+import random
+from examples_to_be_tested import FirstTest, Data, Model, LoginApi 
 import unittest
 from unittest.mock import MagicMock
 
@@ -70,20 +71,64 @@ class TestData(unittest.TestCase):
         self.assertEqual(data.Hämta(0),None)
 
 class TestLoginApi(unittest.TestCase):
+
+    class mock_valid_login:
+        def __init__(self):
+            self.status_code = 200
+            self.body = { "token": "string" }
+        def json(self):
+            return self.body
     
+    class mock_invalid_login:
+        def __init__(self):
+            self.status_code = 403
+            self.body = {}
+        def json(self):
+            return self.body
+    
+    class mock_valid_use_api:
+        def __init__(self, response_body):
+            self.status_code = 200
+            self.body = response_body
+        def json(self):
+            return self.body
+    
+    class mock_invalid_use_api:
+        def __init__(self):
+            self.status_code = 403
+            self.body = {}
+        def json(self):
+            return self.body
+
     def test_valid_login(self):
         login = LoginApi()
 
-        requests.post = MagicMock(return_value={ "json": { "token": "string" }, "status_code": 200})
-        response.json = MagicMock(return_value={ "token": "string" })
+        requests.post = MagicMock(return_value=self.mock_valid_login())
         self.assertEqual(login.login(),True)
 
     def test_invalid_login(self):
         login = LoginApi(username="test",password="test")
 
-        requests.post = MagicMock(return_value={ "json": { }, "status_code": 403})
-        response.json = MagicMock(return_value={})
+        requests.post = MagicMock(return_value=self.mock_invalid_login())
         self.assertEqual(login.login(),False)
+
+    def test_valid_use_api(self):
+        login = LoginApi()
+
+        requests.post = MagicMock(return_value=self.mock_valid_login())
+        login.login()
+        post_data = { "test": "test" }
+        requests.post = MagicMock(return_value=self.mock_valid_use_api(post_data))
+        self.assertEqual(login.use_api(post_data),True)
+
+    def test_invalid_use_api(self):
+        login = LoginApi(username="test",password="test")
+
+        requests.post = MagicMock(return_value=self.mock_invalid_login())
+        login.login()
+        post_data = { "test": "test" }
+        requests.post = MagicMock(return_value=self.mock_invalid_use_api())
+        self.assertEqual(login.use_api(post_data),False)
 
 if __name__ == '__main__':
     unittest.main()

@@ -52,29 +52,25 @@ class LoginApi:
     def __init__(self, username = "username", password = "password"):
         self.username = username
         self.password = password
-        self.response_body = None
-        self.response_status = None
+        self.response = None
 
     def login(self) -> bool:
         url = "http://www.faketestsiteurl.com/login/start"
         post_data = { "name": self.username, "password": self.password }
-        response = requests.post(url, data = post_data)
-        self.response_body = response.json()
-        self.response_status = response.status_code
-
-        if self.response_status == 200:
-            if self.response_body == { "token": "string" }:
+        self.response = requests.post(url, data = post_data)
+        
+        if self.response.status_code == 200:
+            if self.response.json() == { "token": "string" }:
                 return True
         return False
         
     def use_api(self, post_data: dict):
         url = "http://www.faketestsiteurl.com/returns"
-        post_headers = { "auth": self.response.token }
-        response = requests.post(url, headers = post_headers, data = post_data)
-        self.response_body = response.json()
-        self.response_status = response.status_code
+        token = self.response.json().get("token")
+        post_headers = { "auth": token }
+        self.response = requests.post(url, headers = post_headers, data = post_data)
 
-        if self.response_status == 200:
-            if self.response_body == post_data:
+        if self.response.status_code == 200:
+            if self.response.json() == post_data:
                 return True
         return False
