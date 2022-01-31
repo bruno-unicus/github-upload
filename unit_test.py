@@ -30,23 +30,37 @@ class TestMatematik(unittest.TestCase):
 
 class TestModel(unittest.TestCase):
 
-    def test_model_hämta(self):
+    def test_model_hämta_existerande(self):
         model = Model()
         _id = model.SkapaText("hej")
         self.assertEqual(model.HämtaText(_id),"hej")
 
-    def test_model_ändra(self):
+    def test_model_ändra_existerande(self):
         model = Model()
         _id = model.SkapaText("hej")
         self.assertEqual(model.HämtaText(_id),"hej")
         model.ÄndraText(_id,"hejdå")
         self.assertEqual(model.HämtaText(_id),"hejdå")
 
-    def test_model_ta_bort(self):
+    def test_model_ta_bort_existerande(self):
         model = Model()
         _id = model.SkapaText("hej")
         model.TaBortText(_id)
         self.assertEqual(model.HämtaText(_id),None)
+
+    def test_model_hämta_icke_existerande(self):
+        model = Model()
+        self.assertEqual(model.HämtaText(0),None)
+
+    def test_model_ändra_icke_existerande(self):
+        model = Model()
+        model.ÄndraText(0,"hejdå")
+        self.assertEqual(model.HämtaText(0),"hejdå")
+
+    def test_model_ta_bort_icke_existerande(self):
+        model = Model()
+        model.TaBortText(0)
+        self.assertEqual(model.HämtaText(0),None)
 
 class TestData(unittest.TestCase):
 
@@ -64,7 +78,11 @@ class TestData(unittest.TestCase):
         self.assertEqual(data.Skriv(0,"hej"),0)
         self.assertEqual(data.Hämta(0),"hej")
 
-    def test_data_ta_bort(self):
+    def test_data_ta_bort_icke_existerande(self):
+        data = Data()
+        self.assertEqual(data.TaBort(0),{})
+
+    def test_data_ta_bort_existerande(self):
         data = Data()
         self.assertEqual(data.Skriv(0,"hej"),0)
         self.assertEqual(data.TaBort(0),{})

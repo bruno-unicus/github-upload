@@ -41,7 +41,8 @@ class Data:
         return _id
 
     def TaBort(self,_id: int) -> dict:
-        del self.databas[_id]
+        if _id in self.databas:
+            del self.databas[_id]
         return self.databas
 
     def Hämta(self,_id: int) -> Optional[str]:
