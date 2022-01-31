@@ -80,12 +80,14 @@ class TestData(unittest.TestCase):
 
     def test_data_ta_bort_icke_existerande(self):
         data = Data()
-        self.assertEqual(data.TaBort(0),{})
+        data.TaBort(0)
+        self.assertEqual(data.databas,{})
 
     def test_data_ta_bort_existerande(self):
         data = Data()
         self.assertEqual(data.Skriv(0,"hej"),0)
-        self.assertEqual(data.TaBort(0),{})
+        data.TaBort(0)
+        self.assertEqual(data.databas,{})
         self.assertEqual(data.Hämta(0),None)
 
 class TestLoginApi(unittest.TestCase):

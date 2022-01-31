@@ -40,10 +40,10 @@ class Data:
         self.databas[_id] = text
         return _id
 
-    def TaBort(self,_id: int) -> dict:
+    def TaBort(self,_id: int) -> None:
         if _id in self.databas:
             del self.databas[_id]
-        return self.databas
+        return None
 
     def Hämta(self,_id: int) -> Optional[str]:
         return self.databas.get(_id)
